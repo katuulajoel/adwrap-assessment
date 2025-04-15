@@ -1,0 +1,87 @@
+//workspces
+
+[
+  {
+    "id": 1,
+    "name": "Ogilvy Outdoor",
+    "email": "info@ogilvyoutdoor.com",
+    "address": "12 Herbert Macaulay Way, Yaba",
+    "location": "Lagos Mainland"
+  },
+  {
+    "id": 2,
+    "name": "Proactive Media",
+    "email": "contact@proactive.ng",
+    "address": "Plot 14 Wuse Zone 5",
+    "location": "Abuja"
+  }
+]
+
+//staticMediaItems.json
+
+[
+  {
+    "id": 1,
+    "type": "static",
+    "workspace": 1,
+    "format": "standard",
+    "location": "Iyana Oworo, Lagos",
+    "numberOfFaces": 2,
+    "closestLandmark": "Third Mainland Bridge",
+    "availability": "Available",
+    "staticMediaFaces": [
+      {
+        "id": 101,
+        "mediaItem": 1,
+        "description": "Facing traffic towards Island",
+        "availability": "Available",
+        "images": ["https://example.com/billboard-1a.jpg"],
+        "rent": 50000
+      },
+      {
+        "id": 102,
+        "mediaItem": 1,
+        "description": "Facing Mainland",
+        "availability": "Booked",
+        "images": ["https://example.com/billboard-1b.jpg"],
+        "rent": 45000
+      }
+    ]
+  }
+]
+
+
+//streetpole.json
+
+[
+  {
+    "id": 1,
+    "type": "streetpole",
+    "workspace": 2,
+    "location": "Aminu Kano Crescent, Abuja",
+    "closestLandmark": "Wuse Market",
+    "numberOfStreetPoles": 3,
+    "sideRoute": ["North", "South"],
+    "availability": "Available",
+    "routes": [
+      {
+        "id": 201,
+        "sideRoute": "North",
+        "description": "Towards Berger Junction",
+        "numberOfStreetPoles": 2,
+        "pricePerStreetPole": 25000,
+        "images": ["https://example.com/streetpole-1a.jpg"],
+        "mediaItem": 1
+      },
+      {
+        "id": 202,
+        "sideRoute": "South",
+        "description": "Back toward Banex Plaza",
+        "numberOfStreetPoles": 1,
+        "pricePerStreetPole": 20000,
+        "images": ["https://example.com/streetpole-1b.jpg"],
+        "mediaItem": 1
+      }
+    ]
+  }
+]
