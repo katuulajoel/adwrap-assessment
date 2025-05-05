@@ -69,24 +69,12 @@ function WorkspaceCard({ workspace }: WorkspaceCardProps) {
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="h-2 bg-blue-500"></div>
       <div className="p-6">
-        <h2 className="text-xl font-semibold mb-2">{workspace.name}</h2>
+        <h2 className="font-['Inter'] text-[20px] font-bold leading-7 mb-2 align-middle">{workspace.name}</h2>
         
-        <div className="space-y-2 mb-4">
-          {workspace.email && (
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Email:</span> {workspace.email}
-            </p>
-          )}
-          {workspace.location && (
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Location:</span> {workspace.location}
-            </p>
-          )}
-          {workspace.address && (
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Address:</span> {workspace.address}
-            </p>
-          )}
+        <div className="font-['Inter'] text-[14px] font-normal leading-6 text-[#7B7B7B] mb-4">
+          <p className="mb-1">{workspace.email || 'No email provided'}</p>
+          <p className="mb-1">{workspace.location || 'No location provided'}</p>
+          <p>{workspace.address || 'No address provided'}</p>
         </div>
         
         <Link 

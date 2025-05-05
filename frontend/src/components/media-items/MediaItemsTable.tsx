@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { MediaItem, MediaItemWithRelatedData, StaticMediaFace, Route } from '@/types';
+import React, { useState } from 'react';
+import { MediaItemWithRelatedData, StaticMediaFace, Route } from '@/types';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 type ExpandedRowsState = {
@@ -15,7 +15,7 @@ export function MediaItemsTable({ items, isLoading = false }: MediaItemsTablePro
   const [expandedRows, setExpandedRows] = useState<ExpandedRowsState>({});
 
   const toggleRow = (itemId: number) => {
-    setExpandedRows((prev) => ({
+    setExpandedRows(prev => ({
       ...prev,
       [itemId]: !prev[itemId],
     }));
@@ -38,37 +38,70 @@ export function MediaItemsTable({ items, isLoading = false }: MediaItemsTablePro
     );
   }
 
+  // Table header style class that matches the specifications
+  const tableHeaderStyle =
+    'px-6 py-3 text-left text-[12.6px] leading-[21.6px] font-bold text-gray-500';
+
+  // Custom style for ID column values
+  const idColumnStyle = 'font-medium text-[12.55px] text-[#0063F7]';
+
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 shadow">
+    <div className="overflow-hidden">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-8"></th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Availability</th>
+            <th scope="col" className={`${tableHeaderStyle} w-8`}></th>
+            <th scope="col" className={tableHeaderStyle}>
+              ID
+            </th>
+            <th scope="col" className={tableHeaderStyle}>
+              Name
+            </th>
+            <th scope="col" className={tableHeaderStyle}>
+              Type
+            </th>
+            <th scope="col" className={tableHeaderStyle}>
+              Location
+            </th>
+            <th scope="col" className={tableHeaderStyle}>
+              Availability
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {items.map((item) => (
-            <>
-              <tr 
-                key={item.id} 
-                className={`hover:bg-gray-50 ${expandedRows[item.id] ? 'bg-gray-50' : ''} cursor-pointer`}
+          {items.map(item => (
+            <React.Fragment key={item.id}>
+              <tr
+                key={item.id}
+                className={`hover:bg-gray-50 ${
+                  expandedRows[item.id] ? 'bg-gray-50' : ''
+                } cursor-pointer`}
                 onClick={() => toggleRow(item.id)}
               >
                 <td className="px-6 py-4 whitespace-nowrap text-gray-500">
                   {expandedRows[item.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-500">{item.tracking_id}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{item.type.replace('_', ' ')}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.location || '—'}</td>
+                <td className={`px-6 py-4 whitespace-nowrap ${idColumnStyle}`}>
+                  {item.tracking_id}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {item.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                  {item.type.replace('_', ' ')}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {item.location || '—'}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                    ${item.availability === 'Available' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                    ${
+                      item.availability === 'Available'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}
+                  >
                     {item.availability || 'Available'}
                   </span>
                 </td>
@@ -84,7 +117,7 @@ export function MediaItemsTable({ items, isLoading = false }: MediaItemsTablePro
                   </td>
                 </tr>
               )}
-            </>
+            </React.Fragment>
           ))}
         </tbody>
       </table>
@@ -100,7 +133,11 @@ function FacesTable({ faces }: FacesTableProps) {
   if (faces.length === 0) {
     return <p className="text-gray-500 text-sm italic">No faces available for this billboard</p>;
   }
-  
+
+  // Table header style class for nested tables
+  const nestedTableHeaderStyle =
+    "px-4 py-2 text-left font-['Roboto'] text-[12.6px] leading-[21.6px] font-bold tracking-[0%] text-gray-500 uppercase";
+
   return (
     <div className="pl-8 border-l-4 border-blue-500">
       <h4 className="font-medium text-blue-700 mb-3">Billboard Faces</h4>
@@ -108,24 +145,44 @@ function FacesTable({ faces }: FacesTableProps) {
         <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-md">
           <thead className="bg-blue-50">
             <tr>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Face Name</th>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dimensions</th>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Availability</th>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rent</th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Face Name
+              </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Dimensions
+              </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Availability
+              </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Rent
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {faces.map((face) => (
+            {faces.map(face => (
               <tr key={face.id}>
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{face.face_name}</td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{face.dimensions || '—'}</td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {face.face_name}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {face.dimensions || '—'}
+                </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                    ${face.availability === 'Available' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                    ${
+                      face.availability === 'Available'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}
+                  >
                     {face.availability || 'Available'}
                   </span>
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{face.rent ? `$${face.rent}` : '—'}</td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {face.rent ? `$${face.rent}` : '—'}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -143,7 +200,11 @@ function RoutesTable({ routes }: RoutesTableProps) {
   if (routes.length === 0) {
     return <p className="text-gray-500 text-sm italic">No routes available for this street pole</p>;
   }
-  
+
+  // Table header style class for nested tables
+  const nestedTableHeaderStyle =
+    'px-4 py-2 text-left text-[12.6px] leading-[21.6px] font-bold text-gray-500';
+
   return (
     <div className="pl-8 border-l-4 border-green-500">
       <h4 className="font-medium text-green-700 mb-3">Street Pole Routes</h4>
@@ -151,20 +212,38 @@ function RoutesTable({ routes }: RoutesTableProps) {
         <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-md">
           <thead className="bg-green-50">
             <tr>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route Name</th>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Side</th>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance</th>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number of Poles</th>
-              <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price/Pole</th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Route Name
+              </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Side
+              </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Distance
+              </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Number of Poles
+              </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Price/Pole
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {routes.map((route) => (
+            {routes.map(route => (
               <tr key={route.id}>
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{route.route_name}</td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{route.side_route || '—'}</td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{route.distance ? `${route.distance}km` : '—'}</td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{route.number_of_street_poles || '—'}</td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {route.route_name}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {route.side_route || '—'}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {route.distance ? `${route.distance}km` : '—'}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {route.number_of_street_poles || '—'}
+                </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {route.price_per_street_pole ? `$${route.price_per_street_pole}` : '—'}
                 </td>
