@@ -1,0 +1,18 @@
+# Common ignores
+.DS_Store
+*.log
+
+# Environment variables
+.env
+.env.*
+!/.env.example
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
