@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { MediaItemWithRelatedData, StaticMediaFace, Route } from '@/types';
+import { MediaItemWithRelatedData } from '@/types';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { FacesTable } from './FacesTable';
+import { RoutesTable } from './RoutesTable';
 
 type ExpandedRowsState = {
   [key: number]: boolean;
@@ -121,137 +123,6 @@ export function MediaItemsTable({ items, isLoading = false }: MediaItemsTablePro
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-interface FacesTableProps {
-  faces: StaticMediaFace[];
-}
-
-function FacesTable({ faces }: FacesTableProps) {
-  if (faces.length === 0) {
-    return <p className="text-gray-500 text-sm italic">No faces available for this billboard</p>;
-  }
-
-  // Table header style class for nested tables
-  const nestedTableHeaderStyle =
-    "px-4 py-2 text-left font-['Roboto'] text-[12.6px] leading-[21.6px] font-bold tracking-[0%] text-gray-500 uppercase";
-
-  return (
-    <div className="pl-8 border-l-4 border-blue-500">
-      <h4 className="font-medium text-blue-700 mb-3">Billboard Faces</h4>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-md">
-          <thead className="bg-blue-50">
-            <tr>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Face Name
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Dimensions
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Availability
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Rent
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {faces.map(face => (
-              <tr key={face.id}>
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {face.face_name}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {face.dimensions || '—'}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                    ${
-                      face.availability === 'Available'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}
-                  >
-                    {face.availability || 'Available'}
-                  </span>
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {face.rent ? `$${face.rent}` : '—'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-interface RoutesTableProps {
-  routes: Route[];
-}
-
-function RoutesTable({ routes }: RoutesTableProps) {
-  if (routes.length === 0) {
-    return <p className="text-gray-500 text-sm italic">No routes available for this street pole</p>;
-  }
-
-  // Table header style class for nested tables
-  const nestedTableHeaderStyle =
-    'px-4 py-2 text-left text-[12.6px] leading-[21.6px] font-bold text-gray-500';
-
-  return (
-    <div className="pl-8 border-l-4 border-green-500">
-      <h4 className="font-medium text-green-700 mb-3">Street Pole Routes</h4>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-md">
-          <thead className="bg-green-50">
-            <tr>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Route Name
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Side
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Distance
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Number of Poles
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Price/Pole
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {routes.map(route => (
-              <tr key={route.id}>
-                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {route.route_name}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {route.side_route || '—'}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {route.distance ? `${route.distance}km` : '—'}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {route.number_of_street_poles || '—'}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {route.price_per_street_pole ? `$${route.price_per_street_pole}` : '—'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }

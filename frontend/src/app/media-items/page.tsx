@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { MediaItemWithRelatedData, MediaType, Workspace } from '@/types';
 import { mediaItemApi, workspaceApi } from '@/services/api';
 import { MediaItemsTable } from '@/components/media-items/MediaItemsTable';
+import { SearchBar } from '@/components/ui/SearchBar';
 import { useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -177,51 +178,12 @@ export default function MediaItemsPage() {
           )}
         </h1>
 
-        <div className="relative w-full sm:w-auto sm:min-w-[240px]">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-          <input
-            type="text"
-            placeholder="Search media items..."
-            className="w-full pl-10 pr-8 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <div className="max-w-md">
+          <SearchBar
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={setSearchQuery}
+            placeholder="Search media items..."
           />
-          {searchQuery && (
-            <button
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-              onClick={() => setSearchQuery('')}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          )}
         </div>
 
         <div className="p-4 border-b">
