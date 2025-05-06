@@ -3,6 +3,7 @@ import { MediaItemWithRelatedData } from '@/types';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { FacesTable } from './FacesTable';
 import { RoutesTable } from './RoutesTable';
+import Link from 'next/link';
 
 type ExpandedRowsState = {
   [key: number]: boolean;
@@ -68,6 +69,9 @@ export function MediaItemsTable({ items, isLoading = false }: MediaItemsTablePro
             <th scope="col" className={tableHeaderStyle}>
               Availability
             </th>
+            <th scope="col" className={tableHeaderStyle}>
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -75,12 +79,12 @@ export function MediaItemsTable({ items, isLoading = false }: MediaItemsTablePro
             <React.Fragment key={item.id}>
               <tr
                 key={item.id}
-                className={`hover:bg-gray-50 ${
-                  expandedRows[item.id] ? 'bg-gray-50' : ''
-                } cursor-pointer`}
-                onClick={() => toggleRow(item.id)}
+                className={`hover:bg-gray-50 ${expandedRows[item.id] ? 'bg-gray-50' : ''}`}
               >
-                <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                <td
+                  className="px-6 py-4 whitespace-nowrap text-gray-500 cursor-pointer"
+                  onClick={() => toggleRow(item.id)}
+                >
                   {expandedRows[item.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap ${idColumnStyle}`}>
@@ -107,10 +111,19 @@ export function MediaItemsTable({ items, isLoading = false }: MediaItemsTablePro
                     {item.availability || 'Available'}
                   </span>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <Link
+                    href={`/media-items/${item.id}/edit`}
+                    className="text-blue-600 hover:text-blue-900"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    Edit
+                  </Link>
+                </td>
               </tr>
               {expandedRows[item.id] && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 bg-gray-50">
+                  <td colSpan={7} className="px-6 py-4 bg-gray-50">
                     {item.type === 'billboard' ? (
                       <FacesTable faces={item.faces || []} />
                     ) : (

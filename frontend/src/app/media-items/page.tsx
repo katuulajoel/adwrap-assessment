@@ -169,14 +169,25 @@ export default function MediaItemsPage() {
       {error && <div className="bg-red-50 text-red-700 p-4 rounded-md mb-6">{error}</div>}
 
       <div className="bg-white shadow rounded-lg overflow-hidden p-6">
-        <h1 className="font-['Inter'] text-[20px] font-bold leading-7 mb-4">
-          Media Items
-          {filteredItems.length > 0 && (
-            <span className="text-sm font-normal text-gray-500 ml-2">
-              ({filteredItems.length} items)
-            </span>
-          )}
-        </h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="font-['Inter'] text-[20px] font-bold leading-7">
+            Media Items
+            {filteredItems.length > 0 && (
+              <span className="text-sm font-normal text-gray-500 ml-2">
+                ({filteredItems.length} items)
+              </span>
+            )}
+          </h1>
+
+          <Link
+            href={
+              workspaceId ? `/create-media-item?workspace=${workspaceId}` : `/create-media-item`
+            }
+            className="bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors text-sm"
+          >
+            Add New Media Item
+          </Link>
+        </div>
 
         <div className="max-w-md">
           <SearchBar
