@@ -49,10 +49,6 @@ export default function MediaItemForm({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value === '' ? '' : parseInt(value, 10) }));
-  };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value as MediaType;
@@ -332,6 +328,19 @@ export default function MediaItemForm({
                       </select>
                     </div>
                     <div>
+                      <label htmlFor={`image_${index}`} className="block text-gray-700 mb-2">
+                        Image URL
+                      </label>
+                      <input
+                        type="text"
+                        id={`image_${index}`}
+                        name={`image_${index}`}
+                        value={face.image || ''}
+                        onChange={e => updateFace(index, 'image', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
                       <label htmlFor={`rent_${index}`} className="block text-gray-700 mb-2">
                         Rent
                       </label>
@@ -414,6 +423,19 @@ export default function MediaItemForm({
                         name={`description_${index}`}
                         value={route.description || ''}
                         onChange={e => updateRoute(index, 'description', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`image_${index}`} className="block text-gray-700 mb-2">
+                        Image URL
+                      </label>
+                      <input
+                        type="text"
+                        id={`image_${index}`}
+                        name={`image_${index}`}
+                        value={route.image || ''}
+                        onChange={e => updateRoute(index, 'image', e.target.value)}
                         className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Route } from '@/types';
 
 interface RoutesTableProps {
@@ -30,6 +31,12 @@ export function RoutesTable({ routes }: RoutesTableProps) {
               <th scope="col" className={nestedTableHeaderStyle}>
                 Price/Pole
               </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Image
+              </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Description
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -43,6 +50,22 @@ export function RoutesTable({ routes }: RoutesTableProps) {
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {route.price_per_street_pole ? `$${route.price_per_street_pole}` : '—'}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {route.image ? (
+                    <Image
+                      src={route.image}
+                      alt="Route Image"
+                      width={40}
+                      height={40}
+                      className="object-cover"
+                    />
+                  ) : (
+                    '—'
+                  )}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {route.description || '—'}
                 </td>
               </tr>
             ))}

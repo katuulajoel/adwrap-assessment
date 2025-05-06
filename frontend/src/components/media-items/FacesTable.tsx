@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { StaticMediaFace } from '@/types';
 
 interface FacesTableProps {
@@ -29,6 +30,9 @@ export function FacesTable({ faces }: FacesTableProps) {
               <th scope="col" className={nestedTableHeaderStyle}>
                 Rent
               </th>
+              <th scope="col" className={nestedTableHeaderStyle}>
+                Image
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -51,6 +55,19 @@ export function FacesTable({ faces }: FacesTableProps) {
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {face.rent ? `$${face.rent}` : '—'}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {face.image ? (
+                    <Image
+                      src={face.image}
+                      alt="Face Image"
+                      width={40}
+                      height={40}
+                      className="object-cover"
+                    />
+                  ) : (
+                    '—'
+                  )}
                 </td>
               </tr>
             ))}
