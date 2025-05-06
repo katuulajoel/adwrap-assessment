@@ -1,4 +1,5 @@
-# adwrap-assessment  
+# adwrap-assessment
+
 **Full-stack assessment for ADWrap** – build a media management system with support for **billboards** and **streetpoles**, scoped to unique workspaces. Includes sample data and expectations.
 
 ---
@@ -11,9 +12,9 @@ Welcome to the ADWrap technical assessment. This task is designed to evaluate yo
 
 ## 🧭 Summary of What You’ll Do
 
-- Use provided **mock data** as a reference.  
-- Create **media items** via backend logic.  
-- Ensure proper **workspace-scoped ID tracking**.  
+- Use provided **mock data** as a reference.
+- Create **media items** via backend logic.
+- Ensure proper **workspace-scoped ID tracking**.
 - Build a frontend for creating or displaying media items.
 
 ---
@@ -27,10 +28,12 @@ Build an API that allows users to create and manage **media items** (**static bi
 ## 📐 What You'll Be Working With
 
 Each **media item** can be:
+
 - A **Static Billboard** with multiple `staticMediaFaces`
 - A **Street Pole** with one or more `routes`
 
 Sample JSON data is included in `/mock-data/`:
+
 - **Media Items**
 
 Each media item belongs to a **workspace**. Counts (e.g., IDs) should be **independent per workspace** — e.g., each workspace starts counting media items from `1`.
@@ -42,6 +45,7 @@ Each media item belongs to a **workspace**. Counts (e.g., IDs) should be **indep
 Using a database (e.g., **Postgres**), you can do the following:
 
 - **Create tables** for:
+
   - `mediaItems`
   - `staticMediaFaces`
   - `routes`
@@ -62,7 +66,7 @@ Using a database (e.g., **Postgres**), you can do the following:
 
 ### 🎨 Figma Designs
 
-View the full design prototype here: [Figma Link](https://www.figma.com/design/5cvz0q0X4J4OombQ8hRwjr/Dev-Assessment?t=uMSJTFakAgEC6upl-0)  
+View the full design prototype here: [Figma Link](https://www.figma.com/design/5cvz0q0X4J4OombQ8hRwjr/Dev-Assessment?t=uMSJTFakAgEC6upl-0)
 
 Please reference these screens when implementing the media feature.  
 ⚠️ You may ignore extras like filters, pagination, or search on the media table if time is limited.
@@ -77,6 +81,7 @@ Please reference these screens when implementing the media feature.
   - `routes` (for street poles)
 
 Example behavior:
+
 - A static billboard media item will expand to show all its faces.
 - A street pole media item will expand to show all its routes.
 
@@ -86,6 +91,7 @@ Example behavior:
 
 - Responsive layout
 - Clean component and state management
+
 ---
 
 ## 📁 Sample Data
@@ -101,17 +107,64 @@ Example behavior:
 - State: Redux Toolkit or local state
 - Data: Postgres or Use the provided JSON as mock data. Feel free to replicate
 
+---
+
+## 🚀 Deployment & Running Locally
+
+This project is fully containerized using Docker and `docker-compose`. It includes:
+
+- **Postgres database**
+- **Backend (Node.js + Express)**
+- **Frontend (Next.js + Tailwind + ShadCN)**
+
+### 🔧 Quick Start
+
+1. **Clone the repo:**
+
+```bash
+git clone <your-repo-url>
+cd adwrap-assessment
+```
+
+2. **Run the full stack with Docker:**
+
+```bash
+docker-compose up -d
+```
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
+- Postgres: available at localhost:5432 (default creds in `docker-compose.yml`)
+
+3. **Shut down:**
+
+```bash
+docker-compose down -v
+```
+
+---
+
+## ✅ Project Status
+
+- ✅ Backend API implemented with workspace-scoped media items and nested creation (faces, routes).
+- ✅ Database schema set up and seeded with sample data.
+- ✅ Frontend UI built with dynamic forms and expandable tables to show media details.
+- ✅ Docker-based deployment tested and verified.
+
+---
+
 ## 🧪 How to Submit
+
 - Fork this repo (or clone and create a private one).
 - Complete the task.
 - Share your GitHub link or ZIP file with us via email.
 
-
 ## ⏱️ Estimated Time
+
 - We recommend spending no more than 3–6 days total. You’re not expected to build everything — focus on clean, thoughtful implementation.
 
-
 ## 🙌 Questions?
+
 If you’re stuck or unsure about any part of the task, feel free to reach out.
 
 Good luck, and have fun!
