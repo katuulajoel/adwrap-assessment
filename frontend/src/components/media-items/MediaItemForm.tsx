@@ -25,7 +25,7 @@ export default function MediaItemForm({
   isEditing = false,
 }: MediaItemFormProps) {
   const [mediaType, setMediaType] = useState<MediaType>(initialData?.type || 'billboard');
-  const [formData, setFormData] = useState<MediaItemFormData>( // Use MediaItemFormData here
+  const [formData, setFormData] = useState<MediaItemFormData>(
     initialData || {
       workspace_id: workspaceId,
       type: mediaType,

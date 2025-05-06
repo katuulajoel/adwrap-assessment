@@ -8,10 +8,9 @@ import { MediaItem } from '@/types';
 
 interface Params {
   id: string;
-} // Define Params interface
+}
 
 export default function EditMediaItemPage({ params }: { params: Promise<Params> }) {
-  // Type params as Promise<Params>
   const router = useRouter();
   const { id } = use(params);
   const mediaItemId = parseInt(id, 10);

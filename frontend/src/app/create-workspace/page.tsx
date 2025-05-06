@@ -16,15 +16,10 @@ export default function CreateWorkspacePage() {
     setCurrentStep(2);
   };
 
-  const handleMediaItemCreated = () => {
-    // Show success message or reset form to add another media item
-    // We keep the user on step 2 to allow them to add more media items
-  };
-
   const handleFinish = () => {
     // Navigate to the workspace details page
     if (workspace) {
-      router.push(`/workspaces/${workspace.id}`);
+      router.push(`/media-items?workspace=${workspace.id}`);
     }
   };
 
@@ -47,7 +42,7 @@ export default function CreateWorkspacePage() {
               </button>
             </div>
 
-            <MediaItemForm workspaceId={workspace.id} onSuccess={handleMediaItemCreated} />
+            <MediaItemForm workspaceId={workspace.id} onSuccess={() => {}} />
           </>
         )}
       </div>
