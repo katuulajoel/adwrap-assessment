@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StaticMediaFace } from '@/types';
+import ImageModal from '../ui/ImageModal';
 
 interface FacesTableProps {
   faces: StaticMediaFace[];
 }
 
 export function FacesTable({ faces }: FacesTableProps) {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   if (faces.length === 0) {
     return <p className="text-gray-500 text-sm italic">No faces available for this billboard</p>;
   }
@@ -62,7 +65,8 @@ export function FacesTable({ faces }: FacesTableProps) {
                       alt="Face Image"
                       width={40}
                       height={40}
-                      className="object-cover"
+                      className="object-cover cursor-pointer"
+                      onClick={() => setSelectedImage(face.image)}
                     />
                   ) : (
                     '—'
@@ -73,6 +77,14 @@ export function FacesTable({ faces }: FacesTableProps) {
           </tbody>
         </table>
       </div>
+
+      {selectedImage && (
+        <ImageModal
+          isOpen={!!selectedImage}
+          imageUrl={selectedImage}
+          onClose={() => setSelectedImage(null)}
+        />
+      )}
     </div>
   );
 }

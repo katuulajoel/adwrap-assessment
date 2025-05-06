@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Route } from '@/types';
+import ImageModal from '../ui/ImageModal';
 
 interface RoutesTableProps {
   routes: Route[];
 }
 
 export function RoutesTable({ routes }: RoutesTableProps) {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   if (routes.length === 0) {
     return <p className="text-gray-500 text-sm italic">No routes available for this street pole</p>;
   }
@@ -57,7 +60,8 @@ export function RoutesTable({ routes }: RoutesTableProps) {
                       alt="Route Image"
                       width={40}
                       height={40}
-                      className="object-cover"
+                      className="object-cover cursor-pointer"
+                      onClick={() => setSelectedImage(route.image)}
                     />
                   ) : (
                     '—'
@@ -71,6 +75,14 @@ export function RoutesTable({ routes }: RoutesTableProps) {
           </tbody>
         </table>
       </div>
+
+      {selectedImage && (
+        <ImageModal
+          isOpen={!!selectedImage}
+          imageUrl={selectedImage}
+          onClose={() => setSelectedImage(null)}
+        />
+      )}
     </div>
   );
 }
