@@ -35,6 +35,12 @@ VALUES
 (202, 2, 'Back toward Banex Plaza', 'South', 'Route back to Banex Plaza', 1, 20000, '["https://example.com/streetpole-1b.jpg"]')
 ON CONFLICT (id) DO NOTHING;
 
+-- Reset sequences to continue from the highest IDs
+SELECT setval('workspaces_id_seq', (SELECT MAX(id) FROM workspaces));
+SELECT setval('media_items_id_seq', (SELECT MAX(id) FROM media_items));
+SELECT setval('static_media_faces_id_seq', (SELECT MAX(id) FROM static_media_faces));
+SELECT setval('routes_id_seq', (SELECT MAX(id) FROM routes));
+
 -- Refresh Materialized Views
 REFRESH MATERIALIZED VIEW media_faces_summary;
 REFRESH MATERIALIZED VIEW media_routes_summary;

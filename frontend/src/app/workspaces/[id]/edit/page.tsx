@@ -35,8 +35,7 @@ export default function EditWorkspacePage() {
   }, [workspaceId]);
 
   const handleWorkspaceUpdated = (updatedWorkspace: Workspace) => {
-    // Navigate back to workspace details
-    router.push(`/workspaces/${updatedWorkspace.id}`);
+    router.push(`/media-items?workspace=${updatedWorkspace.id}`);
   };
 
   if (loading) {

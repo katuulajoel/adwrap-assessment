@@ -9,24 +9,56 @@ export default function WorkspacesPage() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteWorkspaceId, setDeleteWorkspaceId] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const workspaceToDelete = workspaces.find(w => w.id === deleteWorkspaceId);
 
   useEffect(() => {
-    async function fetchWorkspaces() {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await workspaceApi.getAll();
-        setWorkspaces(data);
-      } catch (err) {
-        console.error('Error fetching workspaces:', err);
-        setError('Failed to load workspaces. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
     fetchWorkspaces();
   }, []);
+
+  async function fetchWorkspaces() {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await workspaceApi.getAll();
+      setWorkspaces(data);
+    } catch (err) {
+      console.error('Error fetching workspaces:', err);
+      setError('Failed to load workspaces. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleDeleteClick = (id: number) => {
+    setDeleteWorkspaceId(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setDeleteWorkspaceId(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteWorkspaceId) return;
+
+    try {
+      setIsDeleting(true);
+      await workspaceApi.delete(deleteWorkspaceId);
+      setWorkspaces(workspaces.filter(workspace => workspace.id !== deleteWorkspaceId));
+      setShowDeleteDialog(false);
+      setDeleteWorkspaceId(null);
+    } catch (err) {
+      console.error('Error deleting workspace:', err);
+      setError('Failed to delete workspace. Please try again later.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="container mx-auto">
@@ -52,8 +84,41 @@ export default function WorkspacesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {workspaces.map(workspace => (
-            <WorkspaceCard key={workspace.id} workspace={workspace} />
+            <WorkspaceCard
+              key={workspace.id}
+              workspace={workspace}
+              onDeleteClick={handleDeleteClick}
+            />
           ))}
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">Delete Workspace</h3>
+            <p className="mb-6">
+              Are you sure you want to delete the workspace &quot;{workspaceToDelete?.name}&quot;?
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={handleCancelDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-red-400"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -62,9 +127,10 @@ export default function WorkspacesPage() {
 
 interface WorkspaceCardProps {
   workspace: Workspace;
+  onDeleteClick: (id: number) => void;
 }
 
-function WorkspaceCard({ workspace }: WorkspaceCardProps) {
+function WorkspaceCard({ workspace, onDeleteClick }: WorkspaceCardProps) {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="h-2 bg-blue-500"></div>
@@ -102,12 +168,25 @@ function WorkspaceCard({ workspace }: WorkspaceCardProps) {
           >
             View media items &rarr;
           </Link>
-          <Link
-            href={`/workspaces/${workspace.id}/delete`}
-            className="text-red-600 hover:text-red-800"
+
+          <button
+            onClick={() => onDeleteClick(workspace.id)}
+            className="text-red-600 hover:text-red-800 text-sm flex items-center"
+            aria-label="Delete workspace"
           >
-            Delete
-          </Link>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 mr-1"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
