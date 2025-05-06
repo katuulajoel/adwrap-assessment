@@ -134,6 +134,7 @@ docker-compose up -d
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
+- Swagger API Documentation: http://localhost:5000/api-docs/#/
 - Postgres: available at localhost:5432 (default creds in `docker-compose.yml`)
 
 3. **Shut down:**
@@ -141,6 +142,17 @@ docker-compose up -d
 ```bash
 docker-compose down -v
 ```
+
+---
+
+## 📚 API Documentation
+
+The project includes Swagger UI for API documentation and testing:
+
+- Access the Swagger UI at: http://localhost:5000/api-docs/#/
+- The documentation provides a complete overview of all available endpoints
+- You can test API calls directly through the Swagger interface
+- Endpoints are organized by resource type (media items, workspaces, etc.)
 
 ---
 
