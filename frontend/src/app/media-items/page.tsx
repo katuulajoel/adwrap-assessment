@@ -47,11 +47,16 @@ export default function MediaItemsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const searchParams = useSearchParams();
   const workspaceId = searchParams.get('workspace');
   const mediaType = searchParams.get('type') as MediaType | null;
   const pathname = usePathname();
+
+  const itemToDelete = allItems.find(item => item.id === deleteItemId);
 
   // Calculate counts for filter badges - using all items to show consistent totals
   const counts = {
@@ -151,6 +156,40 @@ export default function MediaItemsPage() {
     { type: 'street_pole', label: 'Street Poles', count: counts.street_pole },
   ];
 
+  // Handle delete click
+  const handleDeleteClick = (id: number) => {
+    setDeleteItemId(id);
+    setShowDeleteDialog(true);
+  };
+
+  // Handle cancel delete
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setDeleteItemId(null);
+  };
+
+  // Handle confirm delete
+  const handleConfirmDelete = async () => {
+    if (!deleteItemId) return;
+
+    try {
+      setIsDeleting(true);
+      await mediaItemApi.delete(deleteItemId);
+
+      // Remove the deleted item from both arrays
+      setAllItems(allItems.filter(item => item.id !== deleteItemId));
+      setFilteredItems(filteredItems.filter(item => item.id !== deleteItemId));
+
+      setShowDeleteDialog(false);
+      setDeleteItemId(null);
+    } catch (err) {
+      console.error('Error deleting media item:', err);
+      setError('Failed to delete media item. Please try again later.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="container mx-auto">
       {workspace && (
@@ -211,8 +250,41 @@ export default function MediaItemsPage() {
           </div>
         </div>
 
-        <MediaItemsTable items={filteredItems} isLoading={isLoading} />
+        <MediaItemsTable
+          items={filteredItems}
+          isLoading={isLoading}
+          onDeleteItem={handleDeleteClick}
+        />
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">Delete Media Item</h3>
+            <p className="mb-6">
+              Are you sure you want to delete the media item &quot;{itemToDelete?.name}&quot;? This
+              action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={handleCancelDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-red-400"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

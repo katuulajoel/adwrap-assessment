@@ -23,13 +23,13 @@ export default function MediaItemForm({
       workspace_id: workspaceId,
       type: 'billboard',
       name: '',
-      tracking_id: '',
       format: '',
       location: '',
       closest_landmark: '',
       availability: '',
       number_of_faces: 0,
       number_of_street_poles: 0,
+      side_routes: '',
     }
   );
   const [loading, setLoading] = useState(false);
@@ -80,13 +80,13 @@ export default function MediaItemForm({
           workspace_id: workspaceId,
           type: mediaType,
           name: '',
-          tracking_id: '',
           format: '',
           location: '',
           closest_landmark: '',
           availability: '',
           number_of_faces: 0,
           number_of_street_poles: 0,
+          side_routes: '',
         });
       }
     } catch (err) {
@@ -144,21 +144,6 @@ export default function MediaItemForm({
         </div>
 
         <div>
-          <label htmlFor="tracking_id" className="block text-gray-700 mb-2">
-            Tracking ID
-          </label>
-          <input
-            type="text"
-            id="tracking_id"
-            name="tracking_id"
-            value={formData.tracking_id || ''}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
           <label htmlFor="location" className="block text-gray-700 mb-2">
             Location
           </label>
@@ -190,63 +175,90 @@ export default function MediaItemForm({
           <label htmlFor="availability" className="block text-gray-700 mb-2">
             Availability
           </label>
-          <input
-            type="text"
+          <select
             id="availability"
             name="availability"
-            value={formData.availability || ''}
+            value={formData.availability || 'Available'}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          >
+            <option value="Available">Available</option>
+            <option value="Booked">Booked</option>
+          </select>
         </div>
 
         {mediaType === 'billboard' && (
-          <div>
-            <label htmlFor="number_of_faces" className="block text-gray-700 mb-2">
-              Number of Faces
-            </label>
-            <input
-              type="number"
-              id="number_of_faces"
-              name="number_of_faces"
-              value={formData.number_of_faces || ''}
-              onChange={handleNumberChange}
-              min="0"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <>
+            <div>
+              <label htmlFor="number_of_faces" className="block text-gray-700 mb-2">
+                Number of Faces
+              </label>
+              <input
+                type="number"
+                id="number_of_faces"
+                name="number_of_faces"
+                value={formData.number_of_faces || ''}
+                onChange={handleNumberChange}
+                min="0"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="format" className="block text-gray-700 mb-2">
+                Format
+              </label>
+              <select
+                id="format"
+                name="format"
+                value={formData.format || ''}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a format</option>
+                <option value="standard">Standard</option>
+                <option value="unipole">Unipole</option>
+                <option value="rooftop">Rooftop</option>
+              </select>
+            </div>
+          </>
         )}
 
         {mediaType === 'street_pole' && (
-          <div>
-            <label htmlFor="number_of_street_poles" className="block text-gray-700 mb-2">
-              Number of Street Poles
-            </label>
-            <input
-              type="number"
-              id="number_of_street_poles"
-              name="number_of_street_poles"
-              value={formData.number_of_street_poles || ''}
-              onChange={handleNumberChange}
-              min="0"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        )}
+          <>
+            <div>
+              <label htmlFor="number_of_street_poles" className="block text-gray-700 mb-2">
+                Number of Street Poles
+              </label>
+              <input
+                type="number"
+                id="number_of_street_poles"
+                name="number_of_street_poles"
+                value={formData.number_of_street_poles || ''}
+                onChange={handleNumberChange}
+                min="0"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-        <div>
-          <label htmlFor="format" className="block text-gray-700 mb-2">
-            Format
-          </label>
-          <input
-            type="text"
-            id="format"
-            name="format"
-            value={formData.format || ''}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+            <div>
+              <label htmlFor="side_routes" className="block text-gray-700 mb-2">
+                Side Route
+              </label>
+              <select
+                id="side_routes"
+                name="side_routes"
+                value={formData.side_routes || ''}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a side route</option>
+                <option value="North">North</option>
+                <option value="South">South</option>
+              </select>
+            </div>
+          </>
+        )}
 
         <div>
           <button

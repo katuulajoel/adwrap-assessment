@@ -3,7 +3,8 @@ import { MediaItemWithRelatedData } from '@/types';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { FacesTable } from './FacesTable';
 import { RoutesTable } from './RoutesTable';
-import Link from 'next/link';
+import { EditButton } from '@/components/ui/EditButton';
+import { DeleteButton } from '@/components/ui/DeleteButton';
 
 type ExpandedRowsState = {
   [key: number]: boolean;
@@ -12,9 +13,10 @@ type ExpandedRowsState = {
 interface MediaItemsTableProps {
   items: MediaItemWithRelatedData[];
   isLoading?: boolean;
+  onDeleteItem?: (id: number) => void;
 }
 
-export function MediaItemsTable({ items, isLoading = false }: MediaItemsTableProps) {
+export function MediaItemsTable({ items, isLoading = false, onDeleteItem }: MediaItemsTableProps) {
   const [expandedRows, setExpandedRows] = useState<ExpandedRowsState>({});
 
   const toggleRow = (itemId: number) => {
@@ -112,13 +114,16 @@ export function MediaItemsTable({ items, isLoading = false }: MediaItemsTablePro
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Link
-                    href={`/media-items/${item.id}/edit`}
-                    className="text-blue-600 hover:text-blue-900"
-                    onClick={e => e.stopPropagation()}
-                  >
-                    Edit
-                  </Link>
+                  <div className="flex items-center justify-end space-x-3">
+                    <EditButton href={`/media-items/${item.id}/edit`} className="inline-block" />
+                    {onDeleteItem && (
+                      <DeleteButton
+                        onClick={() => onDeleteItem(item.id)}
+                        iconOnly
+                        className="inline-block"
+                      />
+                    )}
+                  </div>
                 </td>
               </tr>
               {expandedRows[item.id] && (

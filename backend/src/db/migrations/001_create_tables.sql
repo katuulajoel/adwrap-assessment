@@ -25,6 +25,10 @@ CREATE TABLE IF NOT EXISTS media_items (
     location VARCHAR(255),
     closest_landmark VARCHAR(255),
     availability availability_status DEFAULT 'Available',
+    format VARCHAR(50), -- for static billboards (e.g., standard, unipole)
+    number_of_faces INTEGER, -- for static billboards
+    number_of_street_poles INTEGER, -- for street poles
+    side_routes JSONB, -- array of routes (for street poles)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -70,34 +74,76 @@ RETURNS TRIGGER AS $$
 DECLARE
     counter_value INTEGER;
     prefix VARCHAR(3);
+    existing_count INTEGER;
+    new_tracking_id VARCHAR(20);
+    is_unique BOOLEAN := FALSE;
 BEGIN
     IF NEW.type = 'static' THEN
-        UPDATE workspace_counters 
-        SET static_count = static_count + 1 
-        WHERE workspace_id = NEW.workspace_id
-        RETURNING static_count INTO counter_value;
-
-        IF counter_value IS NULL THEN
-            INSERT INTO workspace_counters (workspace_id, static_count, streetpole_count)
-            VALUES (NEW.workspace_id, 1, 0)
-            RETURNING static_count INTO counter_value;
-        END IF;
         prefix := 'BB-';
-    ELSE
-        UPDATE workspace_counters 
-        SET streetpole_count = streetpole_count + 1 
-        WHERE workspace_id = NEW.workspace_id
-        RETURNING streetpole_count INTO counter_value;
-
+        
+        -- Get current count
+        SELECT static_count INTO counter_value
+        FROM workspace_counters
+        WHERE workspace_id = NEW.workspace_id;
+        
+        -- Create workspace_counters record if it doesn't exist
         IF counter_value IS NULL THEN
             INSERT INTO workspace_counters (workspace_id, static_count, streetpole_count)
-            VALUES (NEW.workspace_id, 0, 1)
-            RETURNING streetpole_count INTO counter_value;
+            VALUES (NEW.workspace_id, 0, 0);
+            counter_value := 0;
         END IF;
+        
+        -- Find a unique tracking ID
+        WHILE is_unique = FALSE LOOP
+            counter_value := counter_value + 1;
+            new_tracking_id := prefix || counter_value;
+            
+            SELECT COUNT(*) INTO existing_count
+            FROM media_items
+            WHERE tracking_id = new_tracking_id;
+            
+            is_unique := (existing_count = 0);
+        END LOOP;
+        
+        -- Update the counter
+        UPDATE workspace_counters 
+        SET static_count = counter_value 
+        WHERE workspace_id = NEW.workspace_id;
+        
+    ELSE
         prefix := 'SP-';
+        
+        -- Get current count
+        SELECT streetpole_count INTO counter_value
+        FROM workspace_counters
+        WHERE workspace_id = NEW.workspace_id;
+        
+        -- Create workspace_counters record if it doesn't exist
+        IF counter_value IS NULL THEN
+            INSERT INTO workspace_counters (workspace_id, static_count, streetpole_count)
+            VALUES (NEW.workspace_id, 0, 0);
+            counter_value := 0;
+        END IF;
+        
+        -- Find a unique tracking ID
+        WHILE is_unique = FALSE LOOP
+            counter_value := counter_value + 1;
+            new_tracking_id := prefix || counter_value;
+            
+            SELECT COUNT(*) INTO existing_count
+            FROM media_items
+            WHERE tracking_id = new_tracking_id;
+            
+            is_unique := (existing_count = 0);
+        END LOOP;
+        
+        -- Update the counter
+        UPDATE workspace_counters 
+        SET streetpole_count = counter_value 
+        WHERE workspace_id = NEW.workspace_id;
     END IF;
 
-    NEW.tracking_id := prefix || counter_value;
+    NEW.tracking_id := new_tracking_id;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
