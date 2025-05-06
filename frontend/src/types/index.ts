@@ -20,8 +20,6 @@ export interface MediaItem {
   location?: string;
   closest_landmark?: string;
   availability?: string;
-  number_of_faces?: number;
-  number_of_street_poles?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -32,7 +30,6 @@ export interface StaticMediaFace {
   media_item_id: number;
   face_name: string;
   description?: string;
-  dimensions?: string;
   availability?: string;
   rent?: number;
   images?: string[];
@@ -47,8 +44,6 @@ export interface Route {
   route_name: string;
   side_route?: string;
   description?: string;
-  distance?: number;
-  number_of_street_poles?: number;
   price_per_street_pole?: number;
   images?: string[];
   created_at?: string;

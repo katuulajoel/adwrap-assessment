@@ -254,6 +254,7 @@ export default function MediaItemsPage() {
           items={filteredItems}
           isLoading={isLoading}
           onDeleteItem={handleDeleteClick}
+          activeFilter={mediaType}
         />
       </div>
 

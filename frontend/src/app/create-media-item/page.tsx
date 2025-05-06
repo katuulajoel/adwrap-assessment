@@ -44,8 +44,8 @@ export default function CreateMediaItemPage() {
   };
 
   const handleMediaItemCreated = (mediaItem: MediaItem) => {
-    // Redirect to the media item details page
-    router.push(`/media-items/${mediaItem.id}`);
+    // Redirect to the workspace's media items page
+    router.push(`/media-items?workspace=${mediaItem.workspace_id}`);
   };
 
   return (

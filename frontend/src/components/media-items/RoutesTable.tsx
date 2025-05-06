@@ -28,12 +28,6 @@ export function RoutesTable({ routes }: RoutesTableProps) {
                 Side
               </th>
               <th scope="col" className={nestedTableHeaderStyle}>
-                Distance
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Number of Poles
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
                 Price/Pole
               </th>
             </tr>
@@ -46,12 +40,6 @@ export function RoutesTable({ routes }: RoutesTableProps) {
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {route.side_route || '—'}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {route.distance ? `${route.distance}km` : '—'}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {route.number_of_street_poles || '—'}
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {route.price_per_street_pole ? `$${route.price_per_street_pole}` : '—'}

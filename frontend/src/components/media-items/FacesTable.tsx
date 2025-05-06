@@ -11,8 +11,7 @@ export function FacesTable({ faces }: FacesTableProps) {
   }
 
   // Table header style class for nested tables
-  const nestedTableHeaderStyle =
-    "px-4 py-2 text-left font-['Roboto'] text-[12.6px] leading-[21.6px] font-bold tracking-[0%] text-gray-500 uppercase";
+  const nestedTableHeaderStyle = 'px-4 py-2 text-left font-bold text-gray-500';
 
   return (
     <div className="pl-8 border-l-4 border-blue-500">
@@ -22,10 +21,7 @@ export function FacesTable({ faces }: FacesTableProps) {
           <thead className="bg-blue-50">
             <tr>
               <th scope="col" className={nestedTableHeaderStyle}>
-                Face Name
-              </th>
-              <th scope="col" className={nestedTableHeaderStyle}>
-                Dimensions
+                Description
               </th>
               <th scope="col" className={nestedTableHeaderStyle}>
                 Availability
@@ -39,10 +35,7 @@ export function FacesTable({ faces }: FacesTableProps) {
             {faces.map(face => (
               <tr key={face.id}>
                 <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {face.face_name}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
-                  {face.dimensions || '—'}
+                  {face.description}
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm">
                   <span

@@ -173,8 +173,6 @@ router.post('/workspace/:workspaceId/billboard', mediaItemController.createBillb
  *                 type: string
  *               availability:
  *                 type: string
- *               number_of_street_poles:
- *                 type: integer
  *               routes:
  *                 type: array
  *                 items:

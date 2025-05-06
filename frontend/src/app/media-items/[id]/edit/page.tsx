@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
+import { mediaItemApi } from '@/services/api';
 import MediaItemForm from '@/components/media-items/MediaItemForm';
 import { MediaItem } from '@/types';
-import { mediaItemApi } from '@/services/api';
+import React from 'react';
 
-export default function EditMediaItemPage() {
+export default function EditMediaItemPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const params = useParams();
-  const mediaItemId = parseInt(params.id as string, 10);
+  const unwrappedParams = React.use(params);
+  const mediaItemId = parseInt(unwrappedParams.id, 10);
 
   const [mediaItem, setMediaItem] = useState<MediaItem | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,14 @@ export default function EditMediaItemPage() {
 
   useEffect(() => {
     const fetchMediaItem = async () => {
+      if (isNaN(mediaItemId)) {
+        setError('Invalid media item ID');
+        setLoading(false);
+        return;
+      }
+
       try {
+        setLoading(true);
         const data = await mediaItemApi.getById(mediaItemId);
         setMediaItem(data);
       } catch (err) {
@@ -29,37 +36,13 @@ export default function EditMediaItemPage() {
       }
     };
 
-    if (mediaItemId) {
-      fetchMediaItem();
-    }
+    fetchMediaItem();
   }, [mediaItemId]);
 
-  const handleMediaItemUpdated = (updatedMediaItem: MediaItem) => {
-    // Navigate back to media item details or workspace page
-    router.push(`/media-items/${updatedMediaItem.id}`);
+  const handleMediaItemUpdated = (updated: MediaItem) => {
+    // Redirect to the media items page
+    router.push(`/media-items?workspace=${updated.workspace_id}`);
   };
-
-  if (loading) {
-    return (
-      <div className="container mx-auto py-8 px-4 text-center">
-        <p>Loading media item data...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="bg-red-50 text-red-500 p-4 rounded-md mb-4">Error: {error}</div>
-        <button
-          onClick={() => router.back()}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-        >
-          Go Back
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -73,16 +56,28 @@ export default function EditMediaItemPage() {
         </button>
       </div>
 
-      <div className="max-w-3xl mx-auto">
-        {mediaItem && (
+      {error && <div className="bg-red-50 text-red-500 p-4 rounded-md mb-6">{error}</div>}
+
+      {loading ? (
+        <div className="text-center py-10">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="mt-2">Loading media item...</p>
+        </div>
+      ) : mediaItem ? (
+        <div className="max-w-3xl mx-auto">
           <MediaItemForm
             workspaceId={mediaItem.workspace_id}
             initialData={mediaItem}
             isEditing={true}
             onSuccess={handleMediaItemUpdated}
           />
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="bg-red-50 text-red-500 p-4 rounded-md">
+          Media item not found. It may have been deleted or you might not have permission to view
+          it.
+        </div>
+      )}
     </div>
   );
 }

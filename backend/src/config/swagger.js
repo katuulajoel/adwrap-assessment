@@ -9,24 +9,24 @@ const swaggerDefinition = {
     description: 'API documentation for ADWrap Media Management System',
     contact: {
       name: 'API Support',
-      email: 'support@adwrap.com'
-    }
+      email: 'support@adwrap.com',
+    },
   },
   servers: [
     {
       url: 'http://localhost:5000',
-      description: 'Development server'
-    }
+      description: 'Development server',
+    },
   ],
   tags: [
     {
       name: 'Workspaces',
-      description: 'Workspace management'
+      description: 'Workspace management',
     },
     {
       name: 'Media Items',
-      description: 'Media items management (billboards and street poles)'
-    }
+      description: 'Media items management (billboards and street poles)',
+    },
   ],
   components: {
     schemas: {
@@ -36,25 +36,25 @@ const swaggerDefinition = {
         properties: {
           id: {
             type: 'integer',
-            description: 'Workspace ID'
+            description: 'Workspace ID',
           },
           name: {
             type: 'string',
-            description: 'Workspace name'
+            description: 'Workspace name',
           },
           email: {
             type: 'string',
-            description: 'Contact email'
+            description: 'Contact email',
           },
           address: {
             type: 'string',
-            description: 'Workspace address'
+            description: 'Workspace address',
           },
           location: {
             type: 'string',
-            description: 'Workspace location'
-          }
-        }
+            description: 'Workspace location',
+          },
+        },
       },
       MediaItem: {
         type: 'object',
@@ -62,79 +62,71 @@ const swaggerDefinition = {
         properties: {
           id: {
             type: 'integer',
-            description: 'Media item ID'
+            description: 'Media item ID',
           },
           workspace_id: {
             type: 'integer',
-            description: 'Workspace ID this media item belongs to'
+            description: 'Workspace ID this media item belongs to',
           },
           type: {
             type: 'string',
             enum: ['billboard', 'street_pole'],
-            description: 'Type of media item'
+            description: 'Type of media item',
           },
           name: {
             type: 'string',
-            description: 'Name of the media item'
+            description: 'Name of the media item',
           },
           tracking_id: {
             type: 'string',
-            description: 'Tracking ID (e.g., BB-1, SP-1)'
+            description: 'Tracking ID (e.g., BB-1, SP-1)',
           },
           location: {
             type: 'string',
-            description: 'Location of the media item'
+            description: 'Location of the media item',
           },
           closest_landmark: {
             type: 'string',
-            description: 'Closest landmark to the media item'
+            description: 'Closest landmark to the media item',
           },
           availability: {
             type: 'string',
-            description: 'Availability status'
-          }
-        }
+            description: 'Availability status',
+          },
+        },
       },
       StaticMediaFace: {
         type: 'object',
-        required: ['media_item_id', 'face_name'],
+        required: ['media_item_id'],
         properties: {
           id: {
             type: 'integer',
-            description: 'Face ID'
+            description: 'Face ID',
           },
           media_item_id: {
             type: 'integer',
-            description: 'Media item ID this face belongs to'
-          },
-          face_name: {
-            type: 'string',
-            description: 'Name of the face'
+            description: 'Media item ID this face belongs to',
           },
           description: {
             type: 'string',
-            description: 'Description of the face'
-          },
-          dimensions: {
-            type: 'string',
-            description: 'Face dimensions'
+            description: 'Description of the face',
           },
           availability: {
             type: 'string',
-            description: 'Availability status'
+            description: 'Availability status',
           },
           rent: {
             type: 'number',
-            description: 'Rental price'
+            description: 'Rental price',
           },
           images: {
             type: 'array',
             items: {
-              type: 'string'
+              type: 'string',
             },
-            description: 'Images of the face'
-          }
-        }
+            description: 'Images of the face',
+          },
+        },
       },
       Route: {
         type: 'object',
@@ -142,47 +134,35 @@ const swaggerDefinition = {
         properties: {
           id: {
             type: 'integer',
-            description: 'Route ID'
+            description: 'Route ID',
           },
           media_item_id: {
             type: 'integer',
-            description: 'Media item ID this route belongs to'
+            description: 'Media item ID this route belongs to',
           },
           route_name: {
             type: 'string',
-            description: 'Name of the route'
-          },
-          side_route: {
-            type: 'string',
-            description: 'Side route description'
+            description: 'Name of the route',
           },
           description: {
             type: 'string',
-            description: 'Description of the route'
-          },
-          distance: {
-            type: 'number',
-            description: 'Distance of the route'
-          },
-          number_of_street_poles: {
-            type: 'integer',
-            description: 'Number of street poles in the route'
+            description: 'Description of the route',
           },
           price_per_street_pole: {
             type: 'number',
-            description: 'Price per street pole'
+            description: 'Price per street pole',
           },
           images: {
             type: 'array',
             items: {
-              type: 'string'
+              type: 'string',
             },
-            description: 'Images of the route'
-          }
-        }
-      }
-    }
-  }
+            description: 'Images of the route',
+          },
+        },
+      },
+    },
+  },
 };
 
 // Options for the swagger docs

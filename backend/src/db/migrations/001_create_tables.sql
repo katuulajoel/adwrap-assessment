@@ -26,9 +26,6 @@ CREATE TABLE IF NOT EXISTS media_items (
     closest_landmark VARCHAR(255),
     availability availability_status DEFAULT 'Available',
     format VARCHAR(50), -- for static billboards (e.g., standard, unipole)
-    number_of_faces INTEGER, -- for static billboards
-    number_of_street_poles INTEGER, -- for street poles
-    side_routes JSONB, -- array of routes (for street poles)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -38,7 +35,6 @@ CREATE TABLE IF NOT EXISTS static_media_faces (
     id SERIAL PRIMARY KEY,
     media_item_id INTEGER NOT NULL REFERENCES media_items(id) ON DELETE CASCADE,
     description TEXT,
-    dimensions VARCHAR(100),
     availability availability_status DEFAULT 'Available',
     rent DECIMAL(10, 2),
     images JSONB DEFAULT '[]',
@@ -53,8 +49,6 @@ CREATE TABLE IF NOT EXISTS routes (
     route_name VARCHAR(255) NOT NULL,
     side_route VARCHAR(50),
     description TEXT,
-    distance DECIMAL(10, 2),
-    number_of_street_poles INTEGER DEFAULT 0,
     price_per_street_pole DECIMAL(10, 2),
     images JSONB DEFAULT '[]',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -172,7 +166,6 @@ SELECT
     m.tracking_id,
     f.id AS face_id,
     f.description,
-    f.dimensions,
     f.availability,
     f.rent,
     f.images
@@ -192,8 +185,6 @@ SELECT
     r.route_name,
     r.side_route,
     r.description,
-    r.distance,
-    r.number_of_street_poles,
     r.price_per_street_pole,
     r.images
 FROM media_items m

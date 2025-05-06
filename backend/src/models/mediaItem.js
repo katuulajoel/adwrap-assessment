@@ -33,18 +33,10 @@ class MediaItem {
       const { name, format, location, closest_landmark, availability } = data;
       const { rows: mediaRows } = await client.query(
         `INSERT INTO media_items 
-        (workspace_id, type, name, format, location, closest_landmark, availability, number_of_faces) 
-        VALUES ($1, 'static', $2, $3, $4, $5, $6, $7) 
+        (workspace_id, type, name, format, location, closest_landmark, availability) 
+        VALUES ($1, 'static', $2, $3, $4, $5, $6) 
         RETURNING *`,
-        [
-          workspaceId,
-          name,
-          format,
-          location,
-          closest_landmark,
-          availability || 'Available',
-          data.faces?.length || 0,
-        ]
+        [workspaceId, name, format, location, closest_landmark, availability || 'Available']
       );
 
       const mediaItem = mediaRows[0];
@@ -54,13 +46,11 @@ class MediaItem {
         for (const face of data.faces) {
           await client.query(
             `INSERT INTO static_media_faces 
-            (media_item_id, face_name, description, dimensions, availability, rent, images) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            (media_item_id, description, availability, rent, images) 
+            VALUES ($1, $2, $3, $4, $5)`,
             [
               mediaItem.id,
-              face.face_name,
               face.description,
-              face.dimensions,
               face.availability || 'Available',
               face.rent,
               face.images || [],
@@ -89,20 +79,13 @@ class MediaItem {
       await client.query('BEGIN');
 
       // Insert the street pole media item
-      const { name, location, closest_landmark, availability, number_of_street_poles } = data;
+      const { name, location, closest_landmark, availability } = data;
       const { rows: mediaRows } = await client.query(
         `INSERT INTO media_items 
-        (workspace_id, type, name, location, closest_landmark, availability, number_of_street_poles) 
-        VALUES ($1, 'streetpole', $2, $3, $4, $5, $6) 
+        (workspace_id, type, name, location, closest_landmark, availability) 
+        VALUES ($1, 'streetpole', $2, $3, $4, $5) 
         RETURNING *`,
-        [
-          workspaceId,
-          name,
-          location,
-          closest_landmark,
-          availability || 'Available',
-          number_of_street_poles || 0,
-        ]
+        [workspaceId, name, location, closest_landmark, availability || 'Available']
       );
 
       const mediaItem = mediaRows[0];
@@ -112,15 +95,13 @@ class MediaItem {
         for (const route of data.routes) {
           await client.query(
             `INSERT INTO routes 
-            (media_item_id, route_name, side_route, description, distance, number_of_street_poles, price_per_street_pole, images) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            (media_item_id, route_name, side_route, description, price_per_street_pole, images) 
+            VALUES ($1, $2, $3, $4, $5, $6)`,
             [
               mediaItem.id,
               route.route_name,
               route.side_route,
               route.description,
-              route.distance,
-              route.number_of_street_poles,
               route.price_per_street_pole,
               route.images || [],
             ]
@@ -184,14 +165,37 @@ class MediaItem {
 
   // Update a media item
   static async update(id, data) {
-    const { rows } = await db.query(
-      `UPDATE media_items 
-       SET name = $1, location = $2, closest_landmark = $3, availability = $4, updated_at = CURRENT_TIMESTAMP 
-       WHERE id = $5 
-       RETURNING *`,
-      [data.name, data.location, data.closest_landmark, data.availability, id]
-    );
+    // Add fields based on media type
+    let updateQuery = `
+      UPDATE media_items 
+      SET name = $1, 
+          location = $2, 
+          closest_landmark = $3, 
+          availability = $4,
+    `;
 
+    const params = [data.name, data.location, data.closest_landmark, data.availability];
+    let paramCount = 4;
+
+    // If billboard type, update billboard-specific fields
+    if (data.type === 'billboard') {
+      updateQuery += `
+          format = $${paramCount},
+      `;
+      params.push(data.format);
+      paramCount += 1;
+    }
+
+    // Add the last part of the query
+    updateQuery += `
+          updated_at = CURRENT_TIMESTAMP 
+      WHERE id = $${paramCount} 
+      RETURNING *
+    `;
+
+    params.push(id);
+
+    const { rows } = await db.query(updateQuery, params);
     return rows[0];
   }
 

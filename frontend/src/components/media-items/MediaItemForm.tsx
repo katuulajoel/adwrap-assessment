@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { MediaItem, MediaType } from '@/types';
+import { MediaItem, MediaType, Face, Route } from '@/types';
 import { mediaItemApi } from '@/services/api';
+import { X, Plus } from 'lucide-react';
 
 interface MediaItemFormProps {
   workspaceId: number;
@@ -26,14 +27,20 @@ export default function MediaItemForm({
       format: '',
       location: '',
       closest_landmark: '',
-      availability: '',
-      number_of_faces: 0,
-      number_of_street_poles: 0,
-      side_routes: '',
+      availability: 'Available',
+      faces: [],
+      routes: [],
     }
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Initialize faces and routes arrays if they don't exist
+  if (!formData.faces) formData.faces = [];
+  if (!formData.routes) formData.routes = [];
+
+  // Calculate the number of faces dynamically
+  const numberOfFaces = formData.faces?.length || 0;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -51,6 +58,78 @@ export default function MediaItemForm({
     const newType = e.target.value as MediaType;
     setMediaType(newType);
     setFormData(prev => ({ ...prev, type: newType }));
+  };
+
+  // Add a new empty face to the billboard
+  const addFace = () => {
+    const newFace: Partial<Face> = {
+      description: '',
+      availability: 'Available',
+      rent: 0,
+      images: [],
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      faces: [...(prev.faces || []), newFace],
+    }));
+  };
+
+  // Remove a face from the billboard
+  const removeFace = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      faces: (prev.faces || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  // Update face data
+  const updateFace = (index: number, field: string, value: any) => {
+    setFormData(prev => {
+      const updatedFaces = [...(prev.faces || [])];
+      updatedFaces[index] = {
+        ...updatedFaces[index],
+        [field]: field === 'rent' ? (value === '' ? 0 : parseInt(value, 10)) : value,
+      };
+      return { ...prev, faces: updatedFaces };
+    });
+  };
+
+  // Add a new empty route to the street pole
+  const addRoute = () => {
+    const newRoute: Partial<Route> = {
+      route_name: '',
+      side_route: '',
+      description: '',
+      price_per_street_pole: 0,
+      images: [],
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      routes: [...(prev.routes || []), newRoute],
+    }));
+  };
+
+  // Remove a route from the street pole
+  const removeRoute = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      routes: (prev.routes || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  // Update route data
+  const updateRoute = (index: number, field: string, value: any) => {
+    setFormData(prev => {
+      const updatedRoutes = [...(prev.routes || [])];
+      const isNumberField = ['price_per_street_pole'].includes(field);
+      updatedRoutes[index] = {
+        ...updatedRoutes[index],
+        [field]: isNumberField ? (value === '' ? 0 : parseInt(value, 10)) : value,
+      };
+      return { ...prev, routes: updatedRoutes };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -83,10 +162,9 @@ export default function MediaItemForm({
           format: '',
           location: '',
           closest_landmark: '',
-          availability: '',
-          number_of_faces: 0,
-          number_of_street_poles: 0,
-          side_routes: '',
+          availability: 'Available',
+          faces: [],
+          routes: [],
         });
       }
     } catch (err) {
@@ -190,21 +268,6 @@ export default function MediaItemForm({
         {mediaType === 'billboard' && (
           <>
             <div>
-              <label htmlFor="number_of_faces" className="block text-gray-700 mb-2">
-                Number of Faces
-              </label>
-              <input
-                type="number"
-                id="number_of_faces"
-                name="number_of_faces"
-                value={formData.number_of_faces || ''}
-                onChange={handleNumberChange}
-                min="0"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
               <label htmlFor="format" className="block text-gray-700 mb-2">
                 Format
               </label>
@@ -221,41 +284,166 @@ export default function MediaItemForm({
                 <option value="rooftop">Rooftop</option>
               </select>
             </div>
+
+            <div>
+              <label className="block text-gray-700 mb-2">Number of Faces: {numberOfFaces}</label>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 mb-2">Faces</label>
+              {formData.faces.map((face, index) => (
+                <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Face {index + 1}</h3>
+                    <button
+                      type="button"
+                      onClick={() => removeFace(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor={`description_${index}`} className="block text-gray-700 mb-2">
+                        Description
+                      </label>
+                      <textarea
+                        id={`description_${index}`}
+                        name={`description_${index}`}
+                        value={face.description || ''}
+                        onChange={e => updateFace(index, 'description', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`availability_${index}`} className="block text-gray-700 mb-2">
+                        Availability
+                      </label>
+                      <select
+                        id={`availability_${index}`}
+                        name={`availability_${index}`}
+                        value={face.availability || 'Available'}
+                        onChange={e => updateFace(index, 'availability', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="Available">Available</option>
+                        <option value="Booked">Booked</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor={`rent_${index}`} className="block text-gray-700 mb-2">
+                        Rent
+                      </label>
+                      <input
+                        type="number"
+                        id={`rent_${index}`}
+                        name={`rent_${index}`}
+                        value={face.rent || 0}
+                        onChange={e => updateFace(index, 'rent', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addFace}
+                className="flex items-center text-blue-500 hover:text-blue-700"
+              >
+                <Plus size={20} className="mr-2" />
+                Add Face
+              </button>
+            </div>
           </>
         )}
 
         {mediaType === 'street_pole' && (
           <>
             <div>
-              <label htmlFor="number_of_street_poles" className="block text-gray-700 mb-2">
-                Number of Street Poles
-              </label>
-              <input
-                type="number"
-                id="number_of_street_poles"
-                name="number_of_street_poles"
-                value={formData.number_of_street_poles || ''}
-                onChange={handleNumberChange}
-                min="0"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="side_routes" className="block text-gray-700 mb-2">
-                Side Route
-              </label>
-              <select
-                id="side_routes"
-                name="side_routes"
-                value={formData.side_routes || ''}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              <label className="block text-gray-700 mb-2">Routes</label>
+              {formData.routes.map((route, index) => (
+                <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium">Route {index + 1}</h3>
+                    <button
+                      type="button"
+                      onClick={() => removeRoute(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor={`route_name_${index}`} className="block text-gray-700 mb-2">
+                        Route Name
+                      </label>
+                      <input
+                        type="text"
+                        id={`route_name_${index}`}
+                        name={`route_name_${index}`}
+                        value={route.route_name || ''}
+                        onChange={e => updateRoute(index, 'route_name', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`side_route_${index}`} className="block text-gray-700 mb-2">
+                        Side Route
+                      </label>
+                      <select
+                        id={`side_route_${index}`}
+                        name={`side_route_${index}`}
+                        value={route.side_route || ''}
+                        onChange={e => updateRoute(index, 'side_route', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select a side route</option>
+                        <option value="North">North</option>
+                        <option value="South">South</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor={`description_${index}`} className="block text-gray-700 mb-2">
+                        Description
+                      </label>
+                      <textarea
+                        id={`description_${index}`}
+                        name={`description_${index}`}
+                        value={route.description || ''}
+                        onChange={e => updateRoute(index, 'description', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor={`price_per_street_pole_${index}`}
+                        className="block text-gray-700 mb-2"
+                      >
+                        Price per Street Pole
+                      </label>
+                      <input
+                        type="number"
+                        id={`price_per_street_pole_${index}`}
+                        name={`price_per_street_pole_${index}`}
+                        value={route.price_per_street_pole || 0}
+                        onChange={e => updateRoute(index, 'price_per_street_pole', e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addRoute}
+                className="flex items-center text-blue-500 hover:text-blue-700"
               >
-                <option value="">Select a side route</option>
-                <option value="North">North</option>
-                <option value="South">South</option>
-              </select>
+                <Plus size={20} className="mr-2" />
+                Add Route
+              </button>
             </div>
           </>
         )}
