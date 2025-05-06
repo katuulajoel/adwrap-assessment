@@ -119,12 +119,9 @@ const swaggerDefinition = {
             type: 'number',
             description: 'Rental price',
           },
-          images: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-            description: 'Images of the face',
+          image: {
+            type: 'string',
+            description: 'Image of the face',
           },
         },
       },
@@ -152,12 +149,9 @@ const swaggerDefinition = {
             type: 'number',
             description: 'Price per street pole',
           },
-          images: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-            description: 'Images of the route',
+          image: {
+            type: 'string',
+            description: 'Image of the route',
           },
         },
       },

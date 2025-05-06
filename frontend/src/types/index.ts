@@ -32,7 +32,7 @@ export interface StaticMediaFace {
   description?: string;
   availability?: string;
   rent?: number;
-  images?: string[];
+  image?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -45,7 +45,7 @@ export interface Route {
   side_route?: string;
   description?: string;
   price_per_street_pole?: number;
-  images?: string[];
+  image?: string;
   created_at?: string;
   updated_at?: string;
 }

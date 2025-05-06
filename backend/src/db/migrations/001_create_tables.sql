@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS static_media_faces (
     description TEXT,
     availability availability_status DEFAULT 'Available',
     rent DECIMAL(10, 2),
-    images JSONB DEFAULT '[]',
+    image VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS routes (
     side_route VARCHAR(50),
     description TEXT,
     price_per_street_pole DECIMAL(10, 2),
-    images JSONB DEFAULT '[]',
+    image VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -153,8 +153,6 @@ CREATE TRIGGER before_media_item_insert
 CREATE INDEX IF NOT EXISTS idx_media_workspace ON media_items(workspace_id);
 CREATE INDEX IF NOT EXISTS idx_faces_media_item ON static_media_faces(media_item_id);
 CREATE INDEX IF NOT EXISTS idx_routes_media_item ON routes(media_item_id);
-CREATE INDEX IF NOT EXISTS idx_static_faces_images ON static_media_faces USING GIN (images);
-CREATE INDEX IF NOT EXISTS idx_routes_images ON routes USING GIN (images);
 
 -- Materialized Views: media_faces_summary
 CREATE MATERIALIZED VIEW IF NOT EXISTS media_faces_summary AS
@@ -168,7 +166,7 @@ SELECT
     f.description,
     f.availability,
     f.rent,
-    f.images
+    f.image
 FROM media_items m
 JOIN static_media_faces f ON m.id = f.media_item_id
 JOIN workspaces w ON w.id = m.workspace_id;
@@ -186,7 +184,7 @@ SELECT
     r.side_route,
     r.description,
     r.price_per_street_pole,
-    r.images
+    r.image
 FROM media_items m
 JOIN routes r ON m.id = r.media_item_id
 JOIN workspaces w ON w.id = m.workspace_id;

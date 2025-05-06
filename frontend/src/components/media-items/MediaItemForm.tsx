@@ -66,7 +66,7 @@ export default function MediaItemForm({
       description: '',
       availability: 'Available',
       rent: 0,
-      images: [],
+      image: '',
     };
 
     setFormData(prev => ({
@@ -102,7 +102,7 @@ export default function MediaItemForm({
       side_route: '',
       description: '',
       price_per_street_pole: 0,
-      images: [],
+      image: '',
     };
 
     setFormData(prev => ({

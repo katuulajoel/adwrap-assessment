@@ -16,10 +16,10 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert Faces for Static Media Item 1
-INSERT INTO static_media_faces (id, media_item_id, description, availability, images, rent)
+INSERT INTO static_media_faces (id, media_item_id, description, availability, image, rent)
 VALUES
-(101, 1, 'Facing traffic towards Island', 'Available', '["https://example.com/billboard-1a.jpg"]', 50000),
-(102, 1, 'Facing Mainland', 'Booked', '["https://example.com/billboard-1b.jpg"]', 45000)
+(101, 1, 'Facing traffic towards Island', 'Available', 'https://example.com/billboard-1a.jpg', 50000),
+(102, 1, 'Facing Mainland', 'Booked', 'https://example.com/billboard-1b.jpg', 45000)
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert Street Pole Media Item (id=2)
@@ -29,10 +29,10 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert Routes for Street Pole Item 2
-INSERT INTO routes (id, media_item_id, route_name, side_route, description, price_per_street_pole, images)
+INSERT INTO routes (id, media_item_id, route_name, side_route, description, price_per_street_pole, image)
 VALUES
-(201, 2, 'Towards Berger Junction', 'North', 'Route along Berger Junction', 25000, '["https://example.com/streetpole-1a.jpg"]'),
-(202, 2, 'Back toward Banex Plaza', 'South', 'Route back to Banex Plaza', 20000, '["https://example.com/streetpole-1b.jpg"]')
+(201, 2, 'Towards Berger Junction', 'North', 'Route along Berger Junction', 25000, 'https://example.com/streetpole-1a.jpg'),
+(202, 2, 'Back toward Banex Plaza', 'South', 'Route back to Banex Plaza', 20000, 'https://example.com/streetpole-1b.jpg')
 ON CONFLICT (id) DO NOTHING;
 
 -- Initialize workspace counters for tracking IDs

@@ -46,14 +46,14 @@ class MediaItem {
         for (const face of data.faces) {
           await client.query(
             `INSERT INTO static_media_faces 
-            (media_item_id, description, availability, rent, images) 
+            (media_item_id, description, availability, rent, image) 
             VALUES ($1, $2, $3, $4, $5)`,
             [
               mediaItem.id,
               face.description,
               face.availability || 'Available',
               face.rent,
-              face.images || [],
+              face.image || null,
             ]
           );
         }
@@ -95,7 +95,7 @@ class MediaItem {
         for (const route of data.routes) {
           await client.query(
             `INSERT INTO routes 
-            (media_item_id, route_name, side_route, description, price_per_street_pole, images) 
+            (media_item_id, route_name, side_route, description, price_per_street_pole, image) 
             VALUES ($1, $2, $3, $4, $5, $6)`,
             [
               mediaItem.id,
@@ -103,7 +103,7 @@ class MediaItem {
               route.side_route,
               route.description,
               route.price_per_street_pole,
-              route.images || [],
+              route.image || null,
             ]
           );
         }
@@ -165,38 +165,133 @@ class MediaItem {
 
   // Update a media item
   static async update(id, data) {
-    // Add fields based on media type
-    let updateQuery = `
-      UPDATE media_items 
-      SET name = $1, 
-          location = $2, 
-          closest_landmark = $3, 
-          availability = $4,
-    `;
+    const client = await db.pool.connect();
 
-    const params = [data.name, data.location, data.closest_landmark, data.availability];
-    let paramCount = 4;
+    try {
+      await client.query('BEGIN');
 
-    // If billboard type, update billboard-specific fields
-    if (data.type === 'billboard') {
-      updateQuery += `
-          format = $${paramCount},
+      // Update the main media item
+      let updateQuery = `
+        UPDATE media_items 
+        SET name = $1, 
+            location = $2, 
+            closest_landmark = $3, 
+            availability = $4,
       `;
-      params.push(data.format);
-      paramCount += 1;
+
+      const params = [data.name, data.location, data.closest_landmark, data.availability];
+      let paramCount = 5;
+
+      if (data.type === 'billboard') {
+        updateQuery += `
+            format = $${paramCount},
+        `;
+        params.push(data.format);
+        paramCount += 1;
+      }
+
+      updateQuery += `
+            updated_at = CURRENT_TIMESTAMP 
+        WHERE id = $${paramCount} 
+        RETURNING *
+      `;
+
+      params.push(id);
+      const { rows } = await client.query(updateQuery, params);
+      const updatedMediaItem = rows[0];
+
+      // Update faces
+      if (data.faces) {
+        const existingFaceIds = data.faces.filter(face => face.id).map(face => face.id);
+
+        // Delete faces not in the new data
+        if (existingFaceIds.length > 0) {
+          const placeholders = existingFaceIds.map((_, index) => `$${index + 2}`).join(', ');
+          await client.query(
+            `DELETE FROM static_media_faces WHERE media_item_id = $1 AND id NOT IN (${placeholders})`,
+            [id, ...existingFaceIds]
+          );
+        } else {
+          await client.query('DELETE FROM static_media_faces WHERE media_item_id = $1', [id]);
+        }
+
+        // Upsert faces
+        for (const face of data.faces) {
+          if (face.id) {
+            await client.query(
+              `UPDATE static_media_faces 
+               SET description = $1, availability = $2, rent = $3, image = $4, updated_at = CURRENT_TIMESTAMP 
+               WHERE id = $5`,
+              [face.description, face.availability, face.rent, face.image, face.id]
+            );
+          } else {
+            await client.query(
+              `INSERT INTO static_media_faces (media_item_id, description, availability, rent, image, created_at, updated_at) 
+               VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+              [id, face.description, face.availability, face.rent, face.image]
+            );
+          }
+        }
+      }
+
+      // Update routes
+      if (data.routes) {
+        const existingRouteIds = data.routes.filter(route => route.id).map(route => route.id);
+
+        // Delete routes not in the new data
+        if (existingRouteIds.length > 0) {
+          const placeholders = existingRouteIds.map((_, index) => `$${index + 2}`).join(', ');
+          await client.query(
+            `DELETE FROM routes WHERE media_item_id = $1 AND id NOT IN (${placeholders})`,
+            [id, ...existingRouteIds]
+          );
+        } else {
+          await client.query('DELETE FROM routes WHERE media_item_id = $1', [id]);
+        }
+
+        // Upsert routes
+        for (const route of data.routes) {
+          if (route.id) {
+            // Update existing route
+            await client.query(
+              `UPDATE routes 
+               SET route_name = $1, side_route = $2, description = $3, price_per_street_pole = $4, image = $5, updated_at = CURRENT_TIMESTAMP 
+               WHERE id = $6`,
+              [
+                route.route_name,
+                route.side_route,
+                route.description,
+                route.price_per_street_pole,
+                route.image,
+                route.id,
+              ]
+            );
+          } else {
+            // Insert new route
+            await client.query(
+              `INSERT INTO routes (media_item_id, route_name, side_route, description, price_per_street_pole, image, created_at, updated_at) 
+               VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+              [
+                id,
+                route.route_name,
+                route.side_route,
+                route.description,
+                route.price_per_street_pole,
+                route.image,
+              ]
+            );
+          }
+        }
+      }
+
+      await client.query('COMMIT');
+      return updatedMediaItem;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
     }
-
-    // Add the last part of the query
-    updateQuery += `
-          updated_at = CURRENT_TIMESTAMP 
-      WHERE id = $${paramCount} 
-      RETURNING *
-    `;
-
-    params.push(id);
-
-    const { rows } = await db.query(updateQuery, params);
-    return rows[0];
   }
 
   // Delete a media item and its related data
