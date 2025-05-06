@@ -1,16 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { mediaItemApi } from '@/services/api';
 import MediaItemForm from '@/components/media-items/MediaItemForm';
 import { MediaItem } from '@/types';
-import React from 'react';
 
-export default function EditMediaItemPage({ params }: { params: { id: string } }) {
+interface Params {
+  id: string;
+} // Define Params interface
+
+export default function EditMediaItemPage({ params }: { params: Promise<Params> }) {
+  // Type params as Promise<Params>
   const router = useRouter();
-  const unwrappedParams = React.use(params);
-  const mediaItemId = parseInt(unwrappedParams.id, 10);
+  const { id } = use(params);
+  const mediaItemId = parseInt(id, 10);
 
   const [mediaItem, setMediaItem] = useState<MediaItem | null>(null);
   const [loading, setLoading] = useState(true);

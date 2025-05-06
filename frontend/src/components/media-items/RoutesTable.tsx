@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Route } from '@/types';
 import ImageModal from '../ui/ImageModal';
+import Image from 'next/image';
 
 interface RoutesTableProps {
   routes: Route[];
@@ -55,14 +56,19 @@ export function RoutesTable({ routes }: RoutesTableProps) {
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {route.image ? (
-                    <img
-                      src={route.image}
-                      alt="Route Image"
-                      width={40}
-                      height={40}
-                      className="object-cover cursor-pointer"
-                      onClick={() => setSelectedImage(route.image)}
-                    />
+                    <div
+                      className="relative w-10 h-10 cursor-pointer"
+                      onClick={() => setSelectedImage(route.image || null)}
+                    >
+                      <Image
+                        src={route.image}
+                        alt="Route Image"
+                        fill
+                        sizes="40px"
+                        className="object-cover rounded"
+                        unoptimized={route.image.startsWith('http')}
+                      />
+                    </div>
                   ) : (
                     '—'
                   )}

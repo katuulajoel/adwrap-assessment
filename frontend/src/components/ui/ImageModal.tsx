@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface ImageModalProps {
   isOpen: boolean;
@@ -24,7 +25,15 @@ export default function ImageModal({ isOpen, imageUrl, onClose }: ImageModalProp
         >
           ×
         </button>
-        <img src={imageUrl} alt="Enlarged view" className="max-h-[80vh]" />
+        <div className="relative" style={{ width: '100%', height: '80vh' }}>
+          <Image
+            src={imageUrl}
+            alt="Enlarged view"
+            fill
+            style={{ objectFit: 'contain' }}
+            unoptimized={imageUrl.startsWith('http')}
+          />
+        </div>
       </div>
     </div>
   );

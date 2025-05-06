@@ -1,16 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { MediaItem, MediaType, Face, Route } from '@/types';
+import { MediaItem, MediaItemWithRelatedData, MediaType, StaticMediaFace, Route } from '@/types';
 import { mediaItemApi } from '@/services/api';
 import { X, Plus } from 'lucide-react';
 
 interface MediaItemFormProps {
   workspaceId: number;
   onSuccess?: (mediaItem: MediaItem) => void;
-  initialData?: Partial<MediaItem>;
+  initialData?: Partial<MediaItemWithRelatedData>;
   isEditing?: boolean;
 }
+
+// Define the new type for form data to allow partial faces and routes
+type MediaItemFormData = Omit<Partial<MediaItemWithRelatedData>, 'faces' | 'routes'> & {
+  faces?: Partial<StaticMediaFace>[];
+  routes?: Partial<Route>[];
+};
 
 export default function MediaItemForm({
   workspaceId,
@@ -19,10 +25,10 @@ export default function MediaItemForm({
   isEditing = false,
 }: MediaItemFormProps) {
   const [mediaType, setMediaType] = useState<MediaType>(initialData?.type || 'billboard');
-  const [formData, setFormData] = useState<Partial<MediaItem>>(
+  const [formData, setFormData] = useState<MediaItemFormData>( // Use MediaItemFormData here
     initialData || {
       workspace_id: workspaceId,
-      type: 'billboard',
+      type: mediaType,
       name: '',
       format: '',
       location: '',
@@ -49,7 +55,6 @@ export default function MediaItemForm({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value as MediaType;
     setMediaType(newType);
@@ -58,7 +63,7 @@ export default function MediaItemForm({
 
   // Add a new empty face to the billboard
   const addFace = () => {
-    const newFace: Partial<Face> = {
+    const newFace: Partial<StaticMediaFace> = {
       description: '',
       availability: 'Available',
       rent: 0,
@@ -80,12 +85,12 @@ export default function MediaItemForm({
   };
 
   // Update face data
-  const updateFace = (index: number, field: string, value: any) => {
+  const updateFace = (index: number, field: string, value: string) => {
     setFormData(prev => {
       const updatedFaces = [...(prev.faces || [])];
       updatedFaces[index] = {
         ...updatedFaces[index],
-        [field]: field === 'rent' ? (value === '' ? 0 : parseInt(value, 10)) : value,
+        [field]: field === 'rent' ? (value === '' ? 0 : parseInt(String(value), 10)) : value,
       };
       return { ...prev, faces: updatedFaces };
     });
@@ -116,13 +121,13 @@ export default function MediaItemForm({
   };
 
   // Update route data
-  const updateRoute = (index: number, field: string, value: any) => {
+  const updateRoute = (index: number, field: string, value: string) => {
     setFormData(prev => {
       const updatedRoutes = [...(prev.routes || [])];
       const isNumberField = ['price_per_street_pole'].includes(field);
       updatedRoutes[index] = {
         ...updatedRoutes[index],
-        [field]: isNumberField ? (value === '' ? 0 : parseInt(value, 10)) : value,
+        [field]: isNumberField ? (value === '' ? 0 : parseInt(String(value), 10)) : value,
       };
       return { ...prev, routes: updatedRoutes };
     });

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StaticMediaFace } from '@/types';
 import ImageModal from '../ui/ImageModal';
+import Image from 'next/image';
 
 interface FacesTableProps {
   faces: StaticMediaFace[];
@@ -60,14 +61,19 @@ export function FacesTable({ faces }: FacesTableProps) {
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {face.image ? (
-                    <img
-                      src={face.image}
-                      alt="Face Image"
-                      width={40}
-                      height={40}
-                      className="object-cover cursor-pointer"
-                      onClick={() => setSelectedImage(face.image)}
-                    />
+                    <div
+                      className="relative w-10 h-10 cursor-pointer"
+                      onClick={() => setSelectedImage(face.image || null)}
+                    >
+                      <Image
+                        src={face.image}
+                        alt="Face Image"
+                        fill
+                        sizes="40px"
+                        className="object-cover rounded"
+                        unoptimized={face.image.startsWith('http')}
+                      />
+                    </div>
                   ) : (
                     '—'
                   )}

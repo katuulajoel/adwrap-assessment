@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import MediaItemForm from '@/components/media-items/MediaItemForm';
 import { Workspace, MediaItem } from '@/types';
 import { workspaceApi } from '@/services/api';
 
-export default function CreateMediaItemPage() {
+// Create a client component specifically for handling search params
+function CreateMediaItemContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const workspaceIdParam = searchParams.get('workspace');
@@ -102,5 +103,25 @@ export default function CreateMediaItemPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// Import useSearchParams here to avoid usage at the top level
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+
+// Main page component that wraps the content in a suspense boundary
+export default function CreateMediaItemPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="text-center py-10">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="mt-2">Loading...</p>
+        </div>
+      }
+    >
+      <CreateMediaItemContent />
+    </Suspense>
   );
 }

@@ -5,8 +5,8 @@ import { MediaItemWithRelatedData, MediaType, Workspace } from '@/types';
 import { mediaItemApi, workspaceApi } from '@/services/api';
 import { MediaItemsTable } from '@/components/media-items/MediaItemsTable';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 // Filter link component to reduce repetition
 interface FilterLinkProps {
@@ -40,7 +40,10 @@ const FilterLink = ({ href, label, count, isActive }: FilterLinkProps) => (
   </Link>
 );
 
-export default function MediaItemsPage() {
+// Content component that uses useSearchParams
+import { useSearchParams, usePathname } from 'next/navigation';
+
+function MediaItemsContent() {
   const [filteredItems, setFilteredItems] = useState<MediaItemWithRelatedData[]>([]);
   const [allItems, setAllItems] = useState<MediaItemWithRelatedData[]>([]);
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
@@ -287,5 +290,21 @@ export default function MediaItemsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// Main page component wrapped in Suspense
+export default function MediaItemsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="text-center py-10">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="mt-2">Loading media items...</p>
+        </div>
+      }
+    >
+      <MediaItemsContent />
+    </Suspense>
   );
 }
