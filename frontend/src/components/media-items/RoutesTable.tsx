@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { Route } from '@/types';
 
 interface RoutesTableProps {
@@ -53,7 +52,7 @@ export function RoutesTable({ routes }: RoutesTableProps) {
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {route.image ? (
-                    <Image
+                    <img
                       src={route.image}
                       alt="Route Image"
                       width={40}

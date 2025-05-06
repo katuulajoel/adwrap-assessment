@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { StaticMediaFace } from '@/types';
 
 interface FacesTableProps {
@@ -58,7 +57,7 @@ export function FacesTable({ faces }: FacesTableProps) {
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                   {face.image ? (
-                    <Image
+                    <img
                       src={face.image}
                       alt="Face Image"
                       width={40}
